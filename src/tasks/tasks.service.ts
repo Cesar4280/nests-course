@@ -1,26 +1,52 @@
 import { Injectable } from '@nestjs/common';
 
+export interface Task {
+  id: number;
+  title: string;
+  status: boolean;
+}
+
 @Injectable()
 export class TaskService {
-  getTasks() {
+  private tasks: Array<Task> = [
+    {
+      id: 1,
+      title: 'Brush Teeth',
+      status: true,
+    },
+    {
+      id: 2,
+      title: 'Clean The Dishes',
+      status: true,
+    },
+    {
+      id: 3,
+      title: 'Take Out The Garbage',
+      status: true,
+    },
+  ];
+
+  getTasks(): Array<Task> {
     // buscar en una bd
     // petición a otro backend o api
-    return [
-      {
-        id: 1,
-        name: 'Brush Teeth',
-        completed: true,
-      },
-      {
-        id: 2,
-        name: 'Clean The Dishes',
-        completed: true,
-      },
-      {
-        id: 3,
-        name: 'Take Out The Garbage',
-        completed: true,
-      },
-    ];
+    return this.tasks;
+  }
+
+  createTask(task: Task) {
+    console.log(task);
+    this.tasks.push(task);
+    return task;
+  }
+
+  updateTask() {
+    return 'Actualizando tarea';
+  }
+
+  deleteTask() {
+    return 'Eliminando tarea';
+  }
+
+  updateTaskStatus() {
+    return 'Actualizando el estado de la tarea';
   }
 }

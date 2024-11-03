@@ -36,12 +36,18 @@ export class UsersController {
   }
 
   @Patch(':id')
-  editUser(@Param('id', ParseIntPipe) id: number, @Body() newUserData: UserDto) {
+  editUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() newUserData: UserDto,
+  ) {
     return this.usersService.updateUser(id, newUserData);
   }
 
   @Put(':id')
-  updateUser(@Param('id', ParseIntPipe) id: number, @Body() newUserData: UserDto) {
+  updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() newUserData: UserDto,
+  ) {
     return this.usersService.updateUser(id, newUserData);
   }
 
