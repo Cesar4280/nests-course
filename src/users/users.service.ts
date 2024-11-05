@@ -1,15 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+
+export interface User {
+  id: number;
+  email: string;
+  password: string;
+  name: string;
+  age: number;
+}
 
 @Injectable()
 export class UsersService {
-  private getAutoIncrementIdGenerator(count = 1) {
-    return () => count++;
-  }
-  private assignId = this.getAutoIncrementIdGenerator();
-
-  private users: Array<{ id: number; name: string; phone: string }> = [
-    { id: this.assignId(), name: 'Jhon Doe', phone: '123456789' },
-    { id: this.assignId(), name: 'Jhane Doe', phone: '0987456321' },
+  private users: Array<User> = [
+    {
+      id: 1,
+      name: 'Jhon Doe',
+      email: 'jhon@gmail.com',
+      password: 'jhonpassword',
+      age: 20,
+    },
+    {
+      id: 2,
+      name: 'Jane Doe',
+      email: 'jane@gmail.com',
+      password: 'janepassword',
+      age: 25,
+    },
+    {
+      id: 3,
+      name: 'Jhonny Doe',
+      email: 'jhonny@gmail.com',
+      password: 'jhonnypassword',
+      age: 30,
+    },
   ];
 
   getUsers() {
@@ -18,37 +42,32 @@ export class UsersService {
 
   getUser(id: number) {
     return (
-      this.users.find((user) => user.id === id) ?? {
-        message: 'User Not Exist',
-        error: 'Not Found',
-        statusCode: 404,
-      }
+      this.users.find((user) => user.id === id) ??
+      new NotFoundException(`User with id ${id} not found`)
     );
   }
 
-  addUser(newUserData: { name: string; phone: string }) {
-    const userDto = {
-      id: this.assignId(),
-      name: newUserData.name,
-      phone: newUserData.phone,
-    };
-    this.users.push(userDto);
+  createUser(user: CreateUserDto) {
+    const id = this.users.length + 1;
+    const newUser = { id, ...user };
+    this.users.push(newUser);
     return this.users;
   }
 
-  updateUser(id: number, newUserData: { name: string; phone: string }) {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index === -1)
-      return { message: 'User Not Exist', error: 'Not Found', statusCode: 404 };
-    if (newUserData.name) this.users[index].name = newUserData.name;
-    if (newUserData.phone) this.users[index].phone = newUserData.phone;
-    return this.users[index];
+  updateUser(id: number, newUserData: UpdateUserDto) {
+    const userFound = this.users.find((user) => user.id === id);
+    if (!userFound)
+      return new NotFoundException(`User with id ${id} not found`);
+    Object.getOwnPropertyNames(newUserData).forEach(property => {
+      userFound[property] = newUserData[property];
+    });
+    return userFound;
   }
 
   deleteUser(id: number) {
-    const index = this.users.findIndex((user) => user.id === id);
-    return index > -1
-      ? this.users.splice(index, 1)
-      : { message: 'User Not Exist', error: 'Not Found', statusCode: 404 };
+    const indexFound = this.users.findIndex((user) => user.id === id);
+    return indexFound === -1
+      ? new NotFoundException(`User with id ${id} not found`)
+      : this.users.splice(indexFound, 1);
   }
 }

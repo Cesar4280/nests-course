@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 export interface Task {
   id: number;
@@ -26,20 +28,33 @@ export class TaskService {
     },
   ];
 
-  getTasks(): Array<Task> {
+  getTasks(limit?: string): Array<Task> {
     // buscar en una bd
     // petición a otro backend o api
-    return this.tasks;
+    return limit ? this.tasks.slice(0, parseInt(limit)) : this.tasks;
   }
 
-  createTask(task: Task) {
-    console.log(task);
-    this.tasks.push(task);
-    return task;
+  getTask(id: number) {
+    const taskFound = this.tasks.find((task) => task.id === id);
+    return taskFound ?? new NotFoundException(`Task with id ${id} not found`);
   }
 
-  updateTask() {
-    return 'Actualizando tarea';
+  createTask(task: CreateTaskDto) {
+    const id = this.tasks.length + 1;
+    const newTask = { ...task, id };
+    this.tasks.push(newTask);
+    return this.tasks.at(-1);
+  }
+
+  updateTask(id: number, task: UpdateTaskDto) {
+    const taskFound = this.tasks.find((task) => task.id === id);
+    if (!taskFound)
+      return new NotFoundException(
+        `Task with id ${id} not found`,
+      ).getResponse();
+    if ('title' in task) taskFound.title = task.title;
+    if ('status' in task) taskFound.status = task.status;
+    return taskFound;
   }
 
   deleteTask() {
