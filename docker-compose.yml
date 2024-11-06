@@ -1,0 +1,37 @@
+# A Docker Compose must always start with the version tag.
+# We use '3.8' because it's the last version.
+version: '3.8' # Specify the version of Docker Compose
+
+# You should know that Docker Compose works with services.
+# 1 service = 1 container.
+# For example, a service, a server, a client, a database...
+# We use the keyword 'services' to start to create services.
+services:
+  # The name of our service is "database"
+  # but you can use the name of your choice.
+  # Note: This may change the commands you are going to use a little bit.
+  database:
+    # Official Postgres image from DockerHub (we use the last version)
+    image: postgres:latest # Use the latest PostgreSQL image
+    container_name: postgres_db # Name of the container
+
+    # Environment Variables (usefuls to connect to the database)
+    environment:
+      POSTGRES_USER: fazt # Set the default PostgreSQL user (default is 'postgres')
+      POSTGRES_PASSWORD: faztpassword # Set the password for the default user (required)
+      POSTGRES_DB: nestdb # Set the name of the default database (automatically created at first launch)
+
+    # By default, a Postgres database is running on the 5432 port.
+    # If we want to access the database from our computer (outside the container),
+    # we must share the port with our computer's port.
+    # The syntax is [port we want on our machine]:[port we want to retrieve in the container]
+    # Note: You are free to change your computer's port,
+    # but take into consideration that it will change the way
+    # you are connecting to your database.
+    ports:
+      - '5499:5432' # Expose the PostgreSQL port (Map the container's port 5432 to the host's port 5499)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist data
+
+volumes:
+  postgres_data: # Define a named volume for persistent data
