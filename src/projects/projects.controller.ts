@@ -1,6 +1,8 @@
 import { Controller, Delete, Get, Patch, Post, Put } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('projects')
+@ApiTags('projects')
 export class ProjectsController {
   @Get('/')
   getAllProjects() {
