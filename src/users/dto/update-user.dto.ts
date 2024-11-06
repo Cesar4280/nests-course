@@ -22,10 +22,4 @@ export class UpdateUserDto {
   @IsString()
   @IsNotEmpty()
   name?: string;
-
-  @IsOptional()
-  @IsNumber()
-  @Min(18)
-  @Max(100)
-  age?: number;
 }

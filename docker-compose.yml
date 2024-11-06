@@ -1,6 +1,6 @@
 # A Docker Compose must always start with the version tag.
 # We use '3.8' because it's the last version.
-version: '3.8' # Specify the version of Docker Compose
+# version: '3.8' # Specify the version of Docker Compose
 
 # You should know that Docker Compose works with services.
 # 1 service = 1 container.
